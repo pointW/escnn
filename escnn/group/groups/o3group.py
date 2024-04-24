@@ -19,6 +19,7 @@ import numpy as np
 
 from typing import Tuple, Callable, Iterable, List, Dict, Any, Union
 
+from copy import deepcopy
 
 __all__ = ["O3"]
 
@@ -113,6 +114,15 @@ class O3(Group):
         self._inversion = self.element((1, IDENTITY_SO3))
         
         self._build_representations()
+    
+    def __deepcopy__(self, memo):
+        # Check if already copied to avoid infinite recursion
+        if id(self) in memo:
+            return memo[id(self)]
+        # Create a shallow copy of self
+        new_obj = self.__class__(self._maximum_frequency)
+        memo[id(self)] = new_obj
+        return new_obj
 
     @property
     def generators(self) -> List[GroupElement]:
