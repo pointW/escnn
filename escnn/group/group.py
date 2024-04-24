@@ -8,6 +8,7 @@ import escnn.group
 import numpy as np
 from scipy import sparse
 
+from copy import deepcopy
 
 __all__ = ["Group", "GroupElement"]
 
@@ -1032,6 +1033,13 @@ class GroupElement(ABC):
 
     def __repr__(self):
         return self.group._repr_element(self._element, self.param)
+    
+    def __deepcopy__(self, memo):
+        # Create a deep copy of the element without causing recursion
+        new_g = deepcopy(self._element, memo)
+        new_obj = self.__class__(new_g, self.group, param=self.param)
+        memo[id(self)] = new_obj
+        return new_obj
 
     @property
     def value(self):
